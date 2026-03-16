@@ -12,7 +12,7 @@ namespace IncreasePartitions
         private const string TenantId = "<TENANT_ID>";
         private const string ResourceGroupName = "<RESOURCE_GROUP>";
         private const string NamespaceName = "<EVENT_HUBS_NAMESPACE>";
-        private const string EventHubName = "EVENT_HUB_NAME";
+        private const string EventHubName = "<EVENT_HUB_NAME>";
 
         private static async Task Main()
         {
