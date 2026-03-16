@@ -8,37 +8,25 @@ namespace IncreasePartitions
 {
     internal static class Program
     {
-        private const string DefaultEventHubName = "EHLab1Hub";
+        private const string SubscriptionId = "<SUBSCRIPTION_ID>";
+        private const string TenantId = "<TENANT_ID>";
+        private const string ResourceGroupName = "<RESOURCE_GROUP>";
+        private const string NamespaceName = "<EVENT_HUBS_NAMESPACE>";
+        private const string EventHubName = "EVENT_HUB_NAME";
 
-        private static async Task Main(string[] args)
+        private static async Task Main()
         {
-            string? subscriptionId = Environment.GetEnvironmentVariable("AZURE_SUBSCRIPTION_ID");
-            string? resourceGroupName = Environment.GetEnvironmentVariable("AZURE_RESOURCE_GROUP");
-            string? namespaceName = Environment.GetEnvironmentVariable("AZURE_EVENTHUB_NAMESPACE");
-            string eventHubName = Environment.GetEnvironmentVariable("AZURE_EVENTHUB_NAME") ?? DefaultEventHubName;
-            string? managedIdentityClientId = Environment.GetEnvironmentVariable("AZURE_CLIENT_ID");
-
-            if (string.IsNullOrWhiteSpace(subscriptionId) ||
-                string.IsNullOrWhiteSpace(resourceGroupName) ||
-                string.IsNullOrWhiteSpace(namespaceName))
+            var credential = new DefaultAzureCredential(new DefaultAzureCredentialOptions
             {
-                Console.WriteLine("Set AZURE_SUBSCRIPTION_ID, AZURE_RESOURCE_GROUP, and AZURE_EVENTHUB_NAMESPACE to run this sample.");
-                Console.WriteLine("Optional: AZURE_EVENTHUB_NAME (defaults to EHLab1Hub), AZURE_CLIENT_ID for user-assigned managed identity.");
-                return;
-            }
+                TenantId = TenantId
+            });
 
-            DefaultAzureCredentialOptions credentialOptions = new();
-            if (!string.IsNullOrWhiteSpace(managedIdentityClientId))
-            {
-                credentialOptions.ManagedIdentityClientId = managedIdentityClientId;
-            }
-
-            ArmClient armClient = new(new DefaultAzureCredential(credentialOptions), subscriptionId);
+            ArmClient armClient = new(credential, SubscriptionId);
             ResourceIdentifier eventHubResourceId = EventHubResource.CreateResourceIdentifier(
-                subscriptionId,
-                resourceGroupName,
-                namespaceName,
-                eventHubName);
+                SubscriptionId,
+                ResourceGroupName,
+                NamespaceName,
+                EventHubName);
 
             EventHubResource eventHub = armClient.GetEventHubResource(eventHubResourceId);
             Response<EventHubResource> eventHubResponse = await eventHub.GetAsync();
